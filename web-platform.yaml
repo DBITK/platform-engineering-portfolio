@@ -17,3 +17,10 @@ spec:
         image: nginx:alpine
         ports:
         - containerPort: 80
+        volumeMounts:
+        - name: html-volume
+          mountPath: /usr/share/nginx/html # This is where Nginx looks for files
+      volumes:
+      - name: html-volume
+        configMap:
+          name: travel-goals-html
