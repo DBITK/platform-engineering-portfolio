@@ -9,8 +9,6 @@ kind: Deployment
 metadata:
   name: metrics-server
   namespace: kube-system
-  labels:
-    k8s-app: metrics-server
 spec:
   selector:
     matchLabels:
@@ -20,15 +18,20 @@ spec:
       labels:
         k8s-app: metrics-server
     spec:
+      serviceAccountName: metrics-server
       containers:
       - name: metrics-server
         image: registry.k8s.io/metrics-server/metrics-server:v0.6.3
         args:
-        - --kubelet-insecure-tls
-        - --kubelet-preferred-address-types=InternalIP
+        - --cert-dir=/tmp             # Move certs to a writable area
         - --secure-port=4443
+        - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
+        - --kubelet-insecure-tls
         ports:
-        - name: https-metrics # Renamed to avoid the 'duplicate' error
+        - name: https
           containerPort: 4443
           protocol: TCP
-      serviceAccountName: metrics-server
+        securityContext:
+          readOnlyRootFilesystem: false # Allow it to write the files it needs
+          runAsNonRoot: true
+          runAsUser: 1000
