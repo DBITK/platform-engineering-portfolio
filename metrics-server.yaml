@@ -4,13 +4,13 @@ metadata:
   name: metrics-server
   namespace: kube-system
 ---
-# Note: For your portfolio, explain that 'kube-system' is the 
-# standard namespace for cluster-wide utilities.
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: metrics-server
   namespace: kube-system
+  labels:
+    k8s-app: metrics-server
 spec:
   selector:
     matchLabels:
@@ -24,9 +24,11 @@ spec:
       - name: metrics-server
         image: registry.k8s.io/metrics-server/metrics-server:v0.6.3
         args:
-        - --kubelet-insecure-tls # Required for homelabs/self-signed certs
+        - --kubelet-insecure-tls
         - --kubelet-preferred-address-types=InternalIP
+        - --secure-port=4443
         ports:
-        - containerPort: 4443
-          name: https
+        - name: https-metrics # Renamed to avoid the 'duplicate' error
+          containerPort: 4443
           protocol: TCP
+      serviceAccountName: metrics-server
