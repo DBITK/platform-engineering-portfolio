@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-platform-service
+spec:
+  selector:
+    app: web-server
+  ports:
+    - protocol: TCP
+      port: 80        # The port the service listens on
+      targetPort: 80  # The port the pods are listening on
+  type: NodePort      # This makes it reachable on your VM's IP address
