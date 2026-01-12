@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: scalable-web-platform
 spec:
-  replicas: 3 # The Magic Number: How many copies you want
+  replicas: 3
   selector:
     matchLabels:
       app: web-server
